@@ -33,11 +33,14 @@ def post_msg():
 	br.submit(name='view_post')
 	print "[+] Post updated successfully.\n"
 	r = raw_input("Do you want to post something again? (y/n): ")
-	if r==y:
+	if r=='y':
 		post_msg()
-	else:
+	elif(r=='n'):
 		print "Exiting. . ."
 		br.close()
+		sys.exit(0)
+	else:
+		print "Enter correct value\n"
 		sys.exit(0)
 
 
@@ -52,11 +55,23 @@ def fb_login():
 	br.submit()
 
 	login_url = br.geturl()
+
 	error_login = 'https://m.facebook.com/login.php?'
 	s = login_url.find(error_login)
 	if(s==-1):
 		print "\n[+] Login successful!\n"
-		post_msg()
+
+		check_url = br.geturl()
+		checkpoint = 'https://m.facebook.com/checkpoint/?'
+		c = check_url.find(checkpoint)
+		if(c==-1):
+			post_msg()
+		else:
+			print "Checkpoint Found. . ."
+			br.select_form(nr=0)
+			br.submit(name='submit[Continue]')
+			print "[+]Checkpoint bypassed.\n"
+			post_msg()
 
 	elif(s!=-1):
 		print "\n[+] Wrong credentials entered!"
